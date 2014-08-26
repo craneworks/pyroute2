@@ -339,6 +339,10 @@ class LinkedSet(set):
             else:
                 self._ct = set(value)
                 self.target.clear()
+                # immediately check, if the target already
+                # reached -- otherwise you will miss the
+                # target forever
+                self.check_target()
 
     def check_target(self):
         '''
@@ -1062,6 +1066,7 @@ class Interface(Transactional):
                 # 8<---------------------------------------------
                 # IP address changes
                 self['ipaddr'].set_target(transaction['ipaddr'])
+                transaction._targets['ipaddr'] = self['ipaddr'].target
 
                 for i in removed['ipaddr']:
                     # When you remove a primary IP addr, all subnetwork
@@ -1097,13 +1102,11 @@ class Interface(Transactional):
                     if self['kind'] in ('bond', 'bridge'):
                         self.nl.get_addr()
                     # 8<--------------------------------------
-                    self['ipaddr'].target.wait(_SYNC_TIMEOUT)
-                    if not self['ipaddr'].target.is_set():
-                        raise CommitException('ipaddr target is not set')
 
                 # 8<---------------------------------------------
                 # Interface slaves
                 self['ports'].set_target(transaction['ports'])
+                transaction._targets['ports'] = self['ports'].target
 
                 for i in removed['ports']:
                     # detach the port
@@ -1121,10 +1124,6 @@ class Interface(Transactional):
 
                 if removed['ports'] or added['ports']:
                     self.nl.get_links(*(removed['ports'] | added['ports']))
-                    self['ports'].target.wait(_SYNC_TIMEOUT)
-                    if not self['ports'].target.is_set():
-                        raise CommitException('ports target is not set')
-
                     # RHEL 6.5 compat fix -- an explicit timeout
                     # it gives a time for all the messages to pass
                     compat.fix_timeout(1)
