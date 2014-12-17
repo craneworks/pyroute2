@@ -134,6 +134,7 @@ upload: clean force-version
 	${python} setup.py sdist upload
 
 dist: clean force-version
+	$(shell chmod +x python.py)
 	${python} setup.py sdist
 
 install: clean force-version
