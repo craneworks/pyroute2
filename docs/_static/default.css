@@ -36,7 +36,7 @@ div.body {
     background-color: #ffffff;
     color: #000000;
     padding: 0 20px 30px 20px;
-    width: 45em;
+    max-width: 45em;
     padding: 2em;
 }
 
@@ -156,6 +156,12 @@ a.headerlink:hover {
     color: white;
 }
 
+img.align-right {
+    position: absolute;
+    right: 50px;
+    top: 50px;
+}
+
 div.body p, div.body dd, div.body li {
     text-align: justify;
     line-height: 130%;
@@ -210,6 +216,13 @@ p.admonition-title {
 
 p.admonition-title:after {
     content: ":";
+}
+
+cite {
+    background-color: #ececec;
+    color: #333333;
+    font-family: monospace;
+    font-style: normal;
 }
 
 pre {

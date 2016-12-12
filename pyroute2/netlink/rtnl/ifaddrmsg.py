@@ -23,6 +23,8 @@ IFA_F_TENTATIVE = 0x40
 IFA_F_PERMANENT = 0x80
 IFA_F_MANAGETEMPADDR = 0x100
 IFA_F_NOPREFIXROUTE = 0x200
+IFA_F_MCAUTOJOIN = 0x400
+IFA_F_STABLE_PRIVACY = 0x800
 
 (IFA_F_NAMES, IFA_F_VALUES) = map_namespace('IFA_F', globals())
 # 8<----------------------------------------------
@@ -37,15 +39,19 @@ class ifaddrmsg(nlmsg):
     '''
     IP address information
 
-    struct ifaddrmsg {
-       unsigned char ifa_family;    /* Address type */
-       unsigned char ifa_prefixlen; /* Prefixlength of address */
-       unsigned char ifa_flags;     /* Address flags */
-       unsigned char ifa_scope;     /* Address scope */
-       int           ifa_index;     /* Interface index */
-    };
+    C structure::
+
+        struct ifaddrmsg {
+           unsigned char ifa_family;    /* Address type */
+           unsigned char ifa_prefixlen; /* Prefixlength of address */
+           unsigned char ifa_flags;     /* Address flags */
+           unsigned char ifa_scope;     /* Address scope */
+           int           ifa_index;     /* Interface index */
+        };
 
     '''
+    prefix = 'IFA_'
+
     fields = (('family', 'B'),
               ('prefixlen', 'B'),
               ('flags', 'B'),

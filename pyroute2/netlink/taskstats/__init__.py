@@ -48,7 +48,9 @@ class tstats(nla):
               ('cpu_run_virtual_total', 'Q'),             # 8
               ('ac_comm', '32s'),                         # 32 +++ 112
               ('ac_sched', 'B'),                          # 1
-              ('__pad', '3x'),                            # 1 --- 8 (!)
+              ('__ac_pad', '3x'),                         # 3
+              # (the ac_uid field is aligned(8), so we add more padding)
+              ('__implicit_pad', '4x'),                   # 4
               ('ac_uid', 'I'),                            # 4  +++ 120
               ('ac_gid', 'I'),                            # 4
               ('ac_pid', 'I'),                            # 4
@@ -146,14 +148,10 @@ class TaskStats(GenericNetlinkSocket):
             0,1 -- first two CPUs
             0-4,6-10 -- CPUs from 0 to 4 and from 6 to 10
 
-        When the accounting is turned on, on can receive messages
-        with get() routine.
-
         Though the kernel has a procedure, that cleans up accounting,
         when it is not used, it is recommended to run deregister_mask()
         before process exit.
         '''
-        self.monitor(True)
         self._register_mask('TASKSTATS_CMD_ATTR_REGISTER_CPUMASK',
                             mask)
 
@@ -161,6 +159,5 @@ class TaskStats(GenericNetlinkSocket):
         '''
         Stop the accounting.
         '''
-        self.monitor(False)
         self._register_mask('TASKSTATS_CMD_ATTR_DEREGISTER_CPUMASK',
                             mask)
